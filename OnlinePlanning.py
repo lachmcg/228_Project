@@ -128,10 +128,10 @@ class MonteCarloTreeSearch(OnlinePlanningMethod):
 
     def __call__(self, s: Any) -> Any:
         for _ in range(self.m):
-            self.simulate(s, d=self.d)
+            self.simulate(s, d=self.d, steps=0)  # Start with steps=0
         return self.P.A[np.argmax([self.Q[(s, a)] for a in self.P.A])]
 
-    def simulate(self, s: Any, d: int):
+    def simulate(self, s: Any, d: int, steps: int):
         if d <= 0:
             return self.U(s)
         if (s, self.P.A[0]) not in self.N:
@@ -140,8 +140,14 @@ class MonteCarloTreeSearch(OnlinePlanningMethod):
                 self.Q[(s, a)] = 0.0
             return self.U(s)
         a = self.explore(s)
-        s_prime, r = self.P.randstep(s, a)
-        q = r + self.P.gamma * self.simulate(s_prime, d - 1)
+
+        # Call custom_TR with steps to get next state and reward
+        s_prime, r = self.P.TR(s, a, steps)
+
+        # Increment steps for the next simulation call
+        q = r + self.P.gamma * self.simulate(s_prime, d - 1, steps + 1)
+
+        # Update visit counts and Q-values
         self.N[(s, a)] += 1
         self.Q[(s, a)] += (q - self.Q[(s, a)]) / self.N[(s, a)]
         return q
