@@ -144,6 +144,10 @@ class MonteCarloTreeSearch(OnlinePlanningMethod):
         # Call custom_TR with steps to get next state and reward
         s_prime, r = self.P.TR(s, a, steps)
 
+        # Handle invalid transitions directly
+        if s_prime is None:
+            return r  # Large penalty already returned by custom_TR
+        
         # Increment steps for the next simulation call
         q = r + self.P.gamma * self.simulate(s_prime, d - 1, steps + 1)
 
