@@ -14,7 +14,7 @@ max_steps = 200  # Maximum steps per episode
 goal_reward = 100  # Large positive reward for reaching the goal
 
 # Define the goal region (e.g., near the prominent hill's peak)
-goal_x, goal_y = prominent_hill_x, prominent_hill_y
+GOAL_X_COORD, GOAL_Y_COORD = prominent_hill_x, prominent_hill_y
 goal_radius = 5  # Radius around the goal peak to consider as the goal region
 
 # Sparse dictionary for transition counts and rewards
@@ -38,8 +38,8 @@ def get_reward(s, s_prime):
     distance_penalty = np.sqrt((x_prime - x)**2 + (y_prime - y)**2)
 
     # Compute distance to the goal for current and next states
-    current_distance_to_goal = np.sqrt((x - goal_x)**2 + (y - goal_y)**2)
-    next_distance_to_goal = np.sqrt((x_prime - goal_x)**2 + (y_prime - goal_y)**2)
+    current_distance_to_goal = np.sqrt((x - GOAL_X_COORD)**2 + (y - GOAL_Y_COORD)**2)
+    next_distance_to_goal = np.sqrt((x_prime - GOAL_X_COORD)**2 + (y_prime - GOAL_Y_COORD)**2)
 
     # Check if the next state is within the goal region
     if next_distance_to_goal <= goal_radius:
